@@ -2,6 +2,7 @@ import base64
 import socket
 import urllib.parse
 import urllib.request
+import time
 
 # Рабочие и свежие источники
 SOURCES = [
@@ -22,14 +23,17 @@ SOURCES = [
 ]
 
 
-def check_host_alive(host, port, timeout=2):
-    """Быстрая проверка доступности порта сервера"""
+
+
+def get_host_ping(host, port, timeout=2):
+    """Возвращает пинг в миллисекундах или None, если сервер не отвечает"""
+    start_time = time.time()
     try:
         sock = socket.create_connection((host, port), timeout=timeout)
         sock.close()
-        return True
+        return int((time.time() - start_time) * 1000)
     except Exception:
-        return False
+        return None
 
 
 def parse_host_port(config_url):
@@ -82,15 +86,24 @@ def fetch_and_filter():
 
     print(f"[i] Всего найдено кандидатов: {len(raw_configs)}")
 
-    # Фильтрация только живых серверов
-    working_configs = []
+# Замер пинга и отбор самых быстрых серверов
+    tested_configs = []
+    
     for cfg in raw_configs:
         host, port = parse_host_port(cfg)
         if host and port:
-            if check_host_alive(host, port):
-                working_configs.append(cfg)
-                print(f"[+] Рабочий сервер: {host}:{port}")
-
+            ping = get_host_ping(host, port)
+            if ping is not None:
+                tested_configs.append((ping, cfg))
+                print(f"[+] {host}:{port} — ping: {ping} ms")
+    
+    # Сортируем от наименьшего пинга к наибольшему
+    tested_configs.sort(key=lambda x: x[0])
+    
+    # Забираем только ТОП-100 самых быстрых
+    working_configs = [cfg for ping, cfg in tested_configs[:100]]
+    
+    print(f"\n[!] Отобрано {len(working_configs)} самых быстрых серверов (из {len(tested_configs)} доступных)")
     return working_configs
 
 
