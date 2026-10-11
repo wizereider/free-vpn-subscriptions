@@ -25,7 +25,7 @@ jobs:
       - name: Run collector script
         run: |
           # Вставляем вызов основного скрипта проверки
-          python main.py || true
+          python collector.py
 
       - name: Commit and push changes
         run: |
