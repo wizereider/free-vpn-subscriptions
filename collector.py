@@ -3,6 +3,8 @@ import socket
 import urllib.parse
 import urllib.request
 import time
+import urllib.parse
+import random
 
 # Рабочие и свежие источники
 SOURCES = [
@@ -56,7 +58,7 @@ def parse_host_port(config_url):
 import urllib.parse
 
 def rename_config(config_url, index, ping):
-    """Добавляет номер и пинг к оригинальному названию"""
+    """Добавляет номер, пинг и крутые эмодзи к названию"""
     try:
         if "#" in config_url:
             base_url, original_name = config_url.split("#", 1)
@@ -65,13 +67,19 @@ def rename_config(config_url, index, ping):
             base_url = config_url
             original_name = "Server"
         
-        # Красивое имя: номер + пинг + старое название
-        new_name = f"#{index:02d} [{ping}ms] | {original_name}"
+        # Набор стильных эмодзи для разнообразия
+        icons = ["⚡", "🚀", "🔥", "💎", "🎯", "🌐", "🔋"]
+        selected_icon = icons[(index - 1) % len(icons)] # Циклично подбираем иконку под номер
+        
+        # Красивое имя с эмодзи
+        new_name = f"{selected_icon} NT-VPN #{index:02d} [{ping}ms] | {original_name}"
         
         encoded_name = urllib.parse.quote(new_name)
         return f"{base_url}#{encoded_name}"
     except:
         return config_url
+
+
 
 def fetch_and_filter():
     raw_configs = set()
@@ -117,7 +125,8 @@ def fetch_and_filter():
         host, port = parse_host_port(cfg)
         if host and port:
             ping = get_host_ping(host, port)
-            if ping is not None:
+            # Отсекаем мертвые и те, у которых пинг больше 800мс
+            if ping is not None and ping < 800:
                 tested_configs.append((ping, cfg))
                 print(f"[+] {host}:{port} — ping: {ping} ms")
     
