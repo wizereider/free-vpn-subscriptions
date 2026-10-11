@@ -5,10 +5,13 @@ import urllib.request
 
 # Рабочие и свежие источники
 SOURCES = [
+    # Основные рабочие подписки от yebekhe, с которых всё отлично летает
     "https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/base64/mix",
+    "https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/normal/mix",
+    # Дополнительные проверенные сборки
+    "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub1.txt",
+    "https://t.me/s/v2ray_vpn_ir",
     "https://t.me/s/v2ray_free_conf",
-    "https://t.me/s/FreeV2rayConfig",
-    "https://t.me/s/v2rayKng",
 ]
 
 
