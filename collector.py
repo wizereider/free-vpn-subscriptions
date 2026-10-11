@@ -8,6 +8,13 @@ SOURCES = [
     # Основные рабочие подписки от yebekhe, с которых всё отлично летает
     "https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/base64/mix",
     "https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/normal/mix",
+    "https://raw.githubusercontent.com/Au1rxx/free-vpn-subscriptions/main/output/v2ray-base64.txt",
+    
+    # Файлы по странам
+    "https://raw.githubusercontent.com/Au1rxx/free-vpn-subscriptions/main/output/country/DE.txt",
+    "https://raw.githubusercontent.com/Au1rxx/free-vpn-subscriptions/main/output/country/NL.txt",
+    "https://raw.githubusercontent.com/Au1rxx/free-vpn-subscriptions/main/output/country/FI.txt",
+    "https://raw.githubusercontent.com/Au1rxx/free-vpn-subscriptions/main/output/country/US.txt",
     # Дополнительные проверенные сборки
     "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub1.txt",
     "https://t.me/s/v2ray_vpn_ir",
