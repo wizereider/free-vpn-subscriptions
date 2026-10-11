@@ -25,13 +25,18 @@ SOURCES = [
 
 
 
-def get_host_ping(host, port, timeout=2):
-    """Возвращает пинг в миллисекундах или None, если сервер не отвечает"""
+def get_host_ping(host, port, timeout=2.5):
+    """Более точный замер TCP-соединения с отсечением ложных 1мс заглушек"""
     start_time = time.time()
     try:
         sock = socket.create_connection((host, port), timeout=timeout)
         sock.close()
-        return int((time.time() - start_time) * 1000)
+        elapsed = int((time.time() - start_time) * 1000)
+        
+        # Защита от фейковых моментальных ответов CDN (0-2 мс обычно врут)
+        if elapsed < 3:
+            return 5 # Устанавливаем честный минимальный пинг
+        return elapsed
     except Exception:
         return None
 
