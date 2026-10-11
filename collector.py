@@ -48,6 +48,25 @@ def parse_host_port(config_url):
         pass
     return None, None
 
+import urllib.parse
+
+def rename_config(config_url, index, ping):
+    """Добавляет номер и пинг к оригинальному названию"""
+    try:
+        if "#" in config_url:
+            base_url, original_name = config_url.split("#", 1)
+            original_name = urllib.parse.unquote(original_name)
+        else:
+            base_url = config_url
+            original_name = "Server"
+        
+        # Красивое имя: номер + пинг + старое название
+        new_name = f"#{index:02d} [{ping}ms] | {original_name}"
+        
+        encoded_name = urllib.parse.quote(new_name)
+        return f"{base_url}#{encoded_name}"
+    except:
+        return config_url
 
 def fetch_and_filter():
     raw_configs = set()
@@ -100,8 +119,11 @@ def fetch_and_filter():
     # Сортируем от наименьшего пинга к наибольшему
     tested_configs.sort(key=lambda x: x[0])
     
-    # Забираем только ТОП-100 самых быстрых
-    working_configs = [cfg for ping, cfg in tested_configs[:100]]
+# Забираем ТОП-100 и красиво переименовываем
+    working_configs = []
+    for idx, (ping, cfg) in enumerate(tested_configs[:100], start=1):
+        pretty_cfg = rename_config(cfg, idx, ping)
+        working_configs.append(pretty_cfg)
     
     print(f"\n[!] Отобрано {len(working_configs)} самых быстрых серверов (из {len(tested_configs)} доступных)")
     return working_configs
