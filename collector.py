@@ -1,34 +1,52 @@
 import base64
-import re
+import socket
+import urllib.parse
 import urllib.request
 
-# Список источников (Telegram-каналы, открытые подписки, Gist)
+# Рабочие и свежие источники
 SOURCES = [
+    "https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/base64/mix",
     "https://t.me/s/v2ray_free_conf",
     "https://t.me/s/FreeV2rayConfig",
     "https://t.me/s/v2rayKng",
-    "https://raw.githubusercontent.com/yebekhe/TVC/main/subscriptions/xray/base64",
 ]
 
-# Регулярное выражение для поиска VPN-ключей
-CONFIG_PATTERN = re.compile(
-    r"(vless|vmess|ss|trojan|hysteria2|hy2)://[^\s<>\"']+"
-)
+
+def check_host_alive(host, port, timeout=2):
+    """Быстрая проверка доступности порта сервера"""
+    try:
+        sock = socket.create_connection((host, port), timeout=timeout)
+        sock.close()
+        return True
+    except Exception:
+        return False
 
 
-def fetch_and_extract():
-    all_configs = set()
+def parse_host_port(config_url):
+    """Извлекает хост и порт из ссылки VLESS/VMess/SS"""
+    try:
+        parsed = urllib.parse.urlparse(config_url)
+        host = parsed.hostname
+        port = parsed.port or 443
+        if host:
+            return host, port
+    except Exception:
+        pass
+    return None, None
+
+
+def fetch_and_filter():
+    raw_configs = set()
 
     for url in SOURCES:
         try:
-
             req = urllib.request.Request(
                 url, headers={"User-Agent": "Mozilla/5.0"}
             )
             with urllib.request.urlopen(req, timeout=10) as response:
                 content = response.read().decode("utf-8", errors="ignore")
 
-                # Если контент в Base64, пробуем декодировать
+                # Пробуем декодировать Base64, если источник зашифрован
                 try:
                     decoded = base64.b64decode(content).decode(
                         "utf-8", errors="ignore"
@@ -37,38 +55,50 @@ def fetch_and_extract():
                 except Exception:
                     pass
 
-                # Находим все ключи
-                matches = CONFIG_PATTERN.findall(content)
-                found = re.findall(CONFIG_PATTERN, content)
-                # Ищем полные совпадения
                 for line in content.splitlines():
-                    for match in CONFIG_PATTERN.finditer(line):
-                        all_configs.add(match.group(0))
-
-                print(f"[+] Успешно обработан источник: {url}")
+                    line = line.strip()
+                    if any(
+                        line.startswith(proto)
+                        for proto in [
+                            "vless://",
+                            "vmess://",
+                            "ss://",
+                            "trojan://",
+                        ]
+                    ):
+                        raw_configs.add(line)
         except Exception as e:
-            print(f"[-] Ошибка при загрузке {url}: {e}")
+            print(f"[-] Ошибка источника {url}: {e}")
 
-    return list(all_configs)
+    print(f"[i] Всего найдено кандидатов: {len(raw_configs)}")
+
+    # Фильтрация только живых серверов
+    working_configs = []
+    for cfg in raw_configs:
+        host, port = parse_host_port(cfg)
+        if host and port:
+            if check_host_alive(host, port):
+                working_configs.append(cfg)
+                print(f"[+] Рабочий сервер: {host}:{port}")
+
+    return working_configs
 
 
 def main():
-    configs = fetch_and_extract()
-    print(f"Всего найдено уникальных ключей: {len(configs)}")
+    configs = fetch_and_filter()
+    print(f"\n[SUMMARY] Отфильтровано рабочих серверов: {len(configs)}")
 
     if not configs:
-        print("Ключи не найдены, пропуск обновления.")
+        print("[!] Нет рабочих серверов для сохранения.")
         return
 
-    # Объединяем ключи и кодируем в Base64 для подписки
     raw_text = "\n".join(configs)
     b64_output = base64.b64encode(raw_text.encode("utf-8")).decode("utf-8")
 
-    # Сохраняем в файл output/v2ray-base64.txt
     with open("output/v2ray-base64.txt", "w", encoding="utf-8") as f:
         f.write(b64_output)
 
-    print("[SUCCESS] Файл output/v2ray-base64.txt успешно обновлен!")
+    print("[SUCCESS] Обновлено только живыми прокси!")
 
 
 if __name__ == "__main__":
