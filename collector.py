@@ -22,6 +22,34 @@ SOURCES = [
     "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub1.txt",
     "https://t.me/s/v2ray_vpn_ir",
     "https://t.me/s/v2ray_free_conf",
+    # 1. Morpheusadam v2ray-config (отдельные файлы с фокусом на Reality)
+    "https://raw.githubusercontent.com/morpheusadam/v2ray-config/main/reality.txt",
+    "https://raw.githubusercontent.com/morpheusadam/v2ray-config/main/vless.txt",
+    "https://raw.githubusercontent.com/morpheusadam/v2ray-config/main/best.txt",
+    
+    # 2. Au1rxx Free VPN Subscriptions
+    "https://raw.githubusercontent.com/Au1rxx/free-vpn-subscriptions/main/sub/vless.txt",
+    "https://raw.githubusercontent.com/Au1rxx/free-vpn-subscriptions/main/sub/mix.txt",
+    
+    # 3. Mahdibland V2RayAggregator
+    "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_reality.txt",
+    "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_vless.txt",
+    
+    # 4. Iboxz Free V2Ray Collector
+    "https://raw.githubusercontent.com/iboxz/free-v2ray-collector/main/sub/vless.txt",
+    "https://raw.githubusercontent.com/iboxz/free-v2ray-collector/main/sub/reality.txt",
+    
+    # 5. VovaplusEXP p-configs
+    "https://raw.githubusercontent.com/VovaplusEXP/p-configs/main/output/reality.txt",
+    "https://raw.githubusercontent.com/VovaplusEXP/p-configs/main/output/vless.txt",
+    
+    # 6. Turbine8845 Telegram Configs Collector
+    "https://raw.githubusercontent.com/Turbine8845/telegram-configs-collector/main/vless.txt",
+    "https://raw.githubusercontent.com/Turbine8845/telegram-configs-collector/main/reality.txt",
+    
+    # 7. Дополнительные проверенные агрегаторы
+    "https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/outputs/vless.txt",
+    "https://raw.githubusercontent.com/mehrtat/vless-collector/main/vless.txt"
 ]
 
 
